@@ -1,9 +1,9 @@
 {
   "name": "@angular/language-service",
-  "version": "5.0.0-beta.4-97c69744f",
+  "version": "5.0.0-rc.7-170f5c0c5",
   "description": "Angular - language services",
   "main": "./bundles/language-service.umd.js",
-  "module": "./@angular/language-service.es5.js",
+  "module": "./esm5/language-service.js",
   "typings": "./language-service.d.ts",
   "author": "angular",
   "license": "MIT",

@@ -1,17 +1,15 @@
 /**
- * @license Angular v5.0.0-beta.4-97c69744f
+ * @license Angular v5.0.0-rc.7-170f5c0c5
  * (c) 2010-2017 Google, Inc. https://angular.io/
  * License: MIT
  */
-import { ASTWithSource, AotSummaryResolver, AstPath, Attribute, CompileMetadataResolver, CompilerConfig, CssSelector, DEFAULT_INTERPOLATION_CONFIG, DirectiveNormalizer, DirectiveResolver, DomElementSchemaRegistry, Element, ElementAst, HtmlParser, I18NHtmlParser, ImplicitReceiver, JitSummaryResolver, Lexer, NAMED_ENTITIES, NgModuleResolver, NullAstVisitor, NullTemplateVisitor, ParseSpan, ParseTreeResult, Parser, PipeResolver, PropertyRead, RecursiveTemplateAstVisitor, ResourceLoader, SelectorMatcher, StaticReflector, StaticSymbolCache, StaticSymbolResolver, TagContentType, TemplateParser, Text, analyzeNgModules, createOfflineCompileUrlResolver, extractProgramSymbols, findNode, getHtmlTagDefinition, identifierName, splitNsName, templateVisitAll, tokenReference, visitAstChildren } from '@angular/compiler';
-import { AstType, BuiltinType, CompilerHost, ModuleResolutionHostAdapter, getClassMembersFromDeclaration, getExpressionScope, getPipesTable, getSymbolQuery, getTemplateExpressionDiagnostics } from '@angular/compiler-cli/src/language_services';
-import { DiagnosticCategory, SyntaxKind, forEachChild, getPositionOfLineAndCharacter } from 'typescript';
-import * as ts from 'typescript';
+import { ASTWithSource, AotSummaryResolver, AstPath, Attribute, CompileMetadataResolver, CompilerConfig, CssSelector, DEFAULT_INTERPOLATION_CONFIG, DirectiveNormalizer, DirectiveResolver, DomElementSchemaRegistry, Element, ElementAst, HtmlParser, I18NHtmlParser, ImplicitReceiver, JitSummaryResolver, Lexer, NAMED_ENTITIES, NgModuleResolver, NullAstVisitor, NullTemplateVisitor, ParseSpan, ParseTreeResult, Parser, PipeResolver, PropertyRead, RecursiveTemplateAstVisitor, ResourceLoader, SelectorMatcher, StaticReflector, StaticSymbolCache, StaticSymbolResolver, TagContentType, TemplateParser, Text, analyzeNgModules, createOfflineCompileUrlResolver, findNode, getHtmlTagDefinition, identifierName, splitNsName, templateVisitAll, tokenReference, visitAstChildren } from '@angular/compiler';
+import { __extends } from 'tslib';
+import { AstType, BuiltinType, MetadataCollector, createMetadataReaderCache, getClassMembersFromDeclaration, getExpressionScope, getPipesTable, getSymbolQuery, getTemplateExpressionDiagnostics, readMetadata } from '@angular/compiler-cli/src/language_services';
+import { DiagnosticCategory, SyntaxKind, createModuleResolutionCache, forEachChild, getPositionOfLineAndCharacter, resolveModuleName } from 'typescript';
 import { Version, ViewEncapsulation, ɵConsole } from '@angular/core';
 import { existsSync } from 'fs';
-import * as fs from 'fs';
 import { dirname, join } from 'path';
-import * as path from 'path';
 
 /**
  * @license
@@ -38,16 +36,6 @@ var DiagnosticKind;
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-var __extends$2 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 function isParseSourceSpan(value) {
     return value && !!value.start;
 }
@@ -138,7 +126,7 @@ function findTemplateAstAt(ast, position, allowWidening) {
     if (allowWidening === void 0) { allowWidening = false; }
     var path$$1 = [];
     var visitor = new (function (_super) {
-        __extends$2(class_1, _super);
+        __extends(class_1, _super);
         function class_1() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
@@ -196,21 +184,11 @@ function findTemplateAstAt(ast, position, allowWidening) {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-var __extends$1 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 function findAstAt(ast, position, excludeEmpty) {
     if (excludeEmpty === void 0) { excludeEmpty = false; }
     var path$$1 = [];
     var visitor = new (function (_super) {
-        __extends$1(class_1, _super);
+        __extends(class_1, _super);
         function class_1() {
             return _super !== null && _super.apply(this, arguments) || this;
         }
@@ -793,16 +771,6 @@ function propertyNames(elementName) {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-var __extends = (undefined && undefined.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var TEMPLATE_ATTR_PREFIX = '*';
 var hiddenHtmlElements = {
     html: true,
@@ -1389,15 +1357,10 @@ function invertMap(obj) {
 var OverrideKindSymbol = (function () {
     function OverrideKindSymbol(sym, kindOverride) {
         this.sym = sym;
-        this.kindOverride = kindOverride;
+        this.kind = kindOverride;
     }
     Object.defineProperty(OverrideKindSymbol.prototype, "name", {
         get: function () { return this.sym.name; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(OverrideKindSymbol.prototype, "kind", {
-        get: function () { return this.kindOverride; },
         enumerable: true,
         configurable: true
     });
@@ -1735,20 +1698,14 @@ function findSuitableDefaultModule(modules) {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-var __extends$4 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 var ReflectorModuleModuleResolutionHost = (function () {
-    function ReflectorModuleModuleResolutionHost(host) {
+    function ReflectorModuleModuleResolutionHost(host, getProgram) {
         var _this = this;
         this.host = host;
+        this.getProgram = getProgram;
+        // Note: verboseInvalidExpressions is important so that
+        // the collector will collect errors instead of throwing
+        this.metadataCollector = new MetadataCollector({ verboseInvalidExpression: true });
         if (host.directoryExists)
             this.directoryExists = function (directoryName) { return _this.host.directoryExists(directoryName); };
     }
@@ -1761,30 +1718,41 @@ var ReflectorModuleModuleResolutionHost = (function () {
         // Typescript readFile() declaration should be `readFile(fileName: string): string | undefined
         return undefined;
     };
+    ReflectorModuleModuleResolutionHost.prototype.getSourceFileMetadata = function (fileName) {
+        var sf = this.getProgram().getSourceFile(fileName);
+        return sf ? this.metadataCollector.getMetadata(sf) : undefined;
+    };
+    ReflectorModuleModuleResolutionHost.prototype.cacheMetadata = function (fileName) {
+        // Don't cache the metadata for .ts files as they might change in the editor!
+        return fileName.endsWith('.d.ts');
+    };
     return ReflectorModuleModuleResolutionHost;
 }());
-// This reflector host's purpose is to first set verboseInvalidExpressions to true so the
-// reflector will collect errors instead of throwing, and second to all deferring the creation
-// of the program until it is actually needed.
-var ReflectorHost = (function (_super) {
-    __extends$4(ReflectorHost, _super);
+var ReflectorHost = (function () {
     function ReflectorHost(getProgram, serviceHost, options) {
-        var _this = _super.call(this, 
-        // The ancestor value for program is overridden below so passing null here is safe.
-        /* program */ null, options, new ModuleResolutionHostAdapter(new ReflectorModuleModuleResolutionHost(serviceHost)), { verboseInvalidExpression: true }) || this;
-        _this.getProgram = getProgram;
-        return _this;
+        this.options = options;
+        this.metadataReaderCache = createMetadataReaderCache();
+        this.hostAdapter = new ReflectorModuleModuleResolutionHost(serviceHost, getProgram);
+        this.moduleResolutionCache =
+            createModuleResolutionCache(serviceHost.getCurrentDirectory(), function (s) { return s; });
     }
-    Object.defineProperty(ReflectorHost.prototype, "program", {
-        get: function () { return this.getProgram(); },
-        set: function (value) {
-            // Discard the result set by ancestor constructor
-        },
-        enumerable: true,
-        configurable: true
-    });
+    ReflectorHost.prototype.getMetadataFor = function (modulePath) {
+        return readMetadata(modulePath, this.hostAdapter, this.metadataReaderCache);
+    };
+    ReflectorHost.prototype.moduleNameToFileName = function (moduleName, containingFile) {
+        if (!containingFile) {
+            if (moduleName.indexOf('.') === 0) {
+                throw new Error('Resolution of relative paths requires a containing file.');
+            }
+            // Any containing file gives the same result for absolute imports
+            containingFile = join(this.options.basePath, 'index.ts');
+        }
+        var resolved = resolveModuleName(moduleName, containingFile, this.options, this.hostAdapter)
+            .resolvedModule;
+        return resolved ? resolved.resolvedFileName : null;
+    };
     return ReflectorHost;
-}(CompilerHost));
+}());
 
 /**
  * @license
@@ -1793,16 +1761,6 @@ var ReflectorHost = (function (_super) {
  * Use of this source code is governed by an MIT-style license that can be
  * found in the LICENSE file at https://angular.io/license
  */
-var __extends$3 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 /**
  * Create a `LanguageServiceHost`
  */
@@ -1819,7 +1777,7 @@ function createLanguageServiceFromTypescript(host, service) {
  * syntactically incorrect templates.
  */
 var DummyHtmlParser = (function (_super) {
-    __extends$3(DummyHtmlParser, _super);
+    __extends(DummyHtmlParser, _super);
     function DummyHtmlParser() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -1834,7 +1792,7 @@ var DummyHtmlParser = (function (_super) {
  * Avoid loading resources in the language servcie by using a dummy loader.
  */
 var DummyResourceLoader = (function (_super) {
-    __extends$3(DummyResourceLoader, _super);
+    __extends(DummyResourceLoader, _super);
     function DummyResourceLoader() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -1879,7 +1837,7 @@ var TypeScriptServiceHost = (function () {
                 // are hard-coded.
                 var config = new CompilerConfig({ defaultEncapsulation: ViewEncapsulation.Emulated, useJit: false });
                 var directiveNormalizer = new DirectiveNormalizer(resourceLoader, urlResolver, htmlParser, config);
-                result = this._resolver = new CompileMetadataResolver(config, moduleResolver, directiveResolver, pipeResolver, new JitSummaryResolver(), elementSchemaRegistry, directiveNormalizer, new ɵConsole(), this._staticSymbolCache, this.reflector, function (error, type) { return _this.collectError(error, type && type.filePath); });
+                result = this._resolver = new CompileMetadataResolver(config, htmlParser, moduleResolver, directiveResolver, pipeResolver, new JitSummaryResolver(), elementSchemaRegistry, directiveNormalizer, new ɵConsole(), this._staticSymbolCache, this.reflector, function (error, type) { return _this.collectError(error, type && type.filePath); });
             }
             return result;
         },
@@ -1917,9 +1875,9 @@ var TypeScriptServiceHost = (function () {
         var analyzedModules = this.analyzedModules;
         if (!analyzedModules) {
             var analyzeHost = { isSourceFile: function (filePath) { return true; } };
-            var programSymbols = extractProgramSymbols(this.staticSymbolResolver, this.program.getSourceFiles().map(function (sf) { return sf.fileName; }), analyzeHost);
+            var programFiles = this.program.getSourceFiles().map(function (sf) { return sf.fileName; });
             analyzedModules = this.analyzedModules =
-                analyzeNgModules(programSymbols, analyzeHost, this.resolver);
+                analyzeNgModules(programFiles, analyzeHost, this.staticSymbolResolver, this.resolver);
         }
         return analyzedModules;
     };
@@ -2304,9 +2262,9 @@ var TypeScriptServiceHost = (function () {
         }
         return find(sourceFile);
     };
+    TypeScriptServiceHost.missingTemplate = [undefined, undefined];
     return TypeScriptServiceHost;
 }());
-TypeScriptServiceHost.missingTemplate = [undefined, undefined];
 function findTsConfig(fileName) {
     var dir = dirname(fileName);
     while (existsSync(dir)) {
@@ -2404,7 +2362,11 @@ function angularOnlyFilter(ls) {
         getCodeFixesAtPosition: function (fileName, start, end, errorCodes) { return []; },
         getEmitOutput: function (fileName) { return undefined; },
         getProgram: function () { return ls.getProgram(); },
-        dispose: function () { return ls.dispose(); }
+        dispose: function () { return ls.dispose(); },
+        getApplicableRefactors: function (fileName, positionOrRaneg) { return []; },
+        getEditsForRefactor: function (fileName, formatOptions, positionOrRange, refactorName, actionName) {
+            return undefined;
+        },
     };
 }
 function create(info /* ts.server.PluginCreateInfo */) {
@@ -2484,7 +2446,11 @@ function create(info /* ts.server.PluginCreateInfo */) {
             getCodeFixesAtPosition: tryFilenameFourCall(ls.getCodeFixesAtPosition),
             getEmitOutput: tryFilenameCall(ls.getEmitOutput),
             getProgram: function () { return ls.getProgram(); },
-            dispose: function () { return ls.dispose(); }
+            dispose: function () { return ls.dispose(); },
+            getApplicableRefactors: function (fileName, positionOrRaneg) { return []; },
+            getEditsForRefactor: function (fileName, formatOptions, positionOrRange, refactorName, actionName) {
+                return undefined;
+            },
         };
     }
     oldLS = typescriptOnly(oldLS);
@@ -2630,7 +2596,7 @@ function create(info /* ts.server.PluginCreateInfo */) {
 /**
  * @stable
  */
-var VERSION = new Version('5.0.0-beta.4-97c69744f');
+var VERSION = new Version('5.0.0-rc.7-170f5c0c5');
 
 /**
  * @license
