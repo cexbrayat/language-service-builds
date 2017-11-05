@@ -1,5 +1,5 @@
 /**
- * @license Angular v5.0.0-rc.8-bb807501c
+ * @license Angular v5.1.0-beta.0-21bfaf226
  * (c) 2010-2017 Google, Inc. https://angular.io/
  * License: MIT
  */
@@ -2309,7 +2309,13 @@ function create(info /* ts.server.PluginCreateInfo */) {
         proxy[k] = function () { return oldLS[k].apply(oldLS, arguments); };
     }
     function completionToEntry(c) {
-        return { kind: c.kind, name: c.name, sortText: c.sort, kindModifiers: '' };
+        return {
+            // TODO: remove any and fix type error.
+            kind: c.kind,
+            name: c.name,
+            sortText: c.sort,
+            kindModifiers: ''
+        };
     }
     function diagnosticToDiagnostic(d, file) {
         const result = {
@@ -2414,9 +2420,10 @@ function create(info /* ts.server.PluginCreateInfo */) {
                         fileName: loc.fileName,
                         textSpan: { start: loc.span.start, length: loc.span.end - loc.span.start },
                         name: '',
+                        // TODO: remove any and fix type error.
                         kind: 'definition',
                         containerName: loc.fileName,
-                        containerKind: 'file'
+                        containerKind: 'file',
                     });
                 }
             }
@@ -2441,7 +2448,7 @@ function create(info /* ts.server.PluginCreateInfo */) {
 /**
  * @stable
  */
-const VERSION = new Version('5.0.0-rc.8-bb807501c');
+const VERSION = new Version('5.1.0-beta.0-21bfaf226');
 
 /**
  * @license
