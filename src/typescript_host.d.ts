@@ -28,7 +28,7 @@ export declare class DummyResourceLoader extends ResourceLoader {
     get(url: string): Promise<string>;
 }
 /**
- * An implemntation of a `LanguageServiceHost` for a TypeScript project.
+ * An implementation of a `LanguageServiceHost` for a TypeScript project.
  *
  * The `TypeScriptServiceHost` implements the Angular `LanguageServiceHost` using
  * the TypeScript language services.
@@ -64,32 +64,32 @@ export declare class TypeScriptServiceHost implements LanguageServiceHost {
     getTemplateReferences(): string[];
     getTemplateAt(fileName: string, position: number): TemplateSource | undefined;
     getAnalyzedModules(): NgAnalyzedModules;
-    private ensureAnalyzedModules();
+    private ensureAnalyzedModules;
     getTemplates(fileName: string): TemplateSources;
     getDeclarations(fileName: string): Declarations;
-    getSourceFile(fileName: string): ts.SourceFile;
+    getSourceFile(fileName: string): ts.SourceFile | undefined;
     updateAnalyzedModules(): void;
     private readonly program;
     private readonly checker;
-    private validate();
-    private clearCaches();
-    private ensureTemplateMap();
-    private getSourceFromDeclaration(fileName, version, source, span, type, declaration, node, sourceFile);
-    private getSourceFromNode(fileName, version, node);
-    private getSourceFromType(fileName, version, type);
+    private validate;
+    private clearCaches;
+    private ensureTemplateMap;
+    private getSourceFromDeclaration;
+    private getSourceFromNode;
+    private getSourceFromType;
     private readonly reflectorHost;
-    private collectError(error, filePath);
+    private collectError;
     private readonly staticSymbolResolver;
     private readonly reflector;
-    private getTemplateClassFromStaticSymbol(type);
+    private getTemplateClassFromStaticSymbol;
     private static missingTemplate;
     /**
      * Given a template string node, see if it is an Angular template string, and if so return the
      * containing class.
      */
-    private getTemplateClassDeclFromNode(currentToken);
-    private getCollectedErrors(defaultSpan, sourceFile);
-    private getDeclarationFromNode(sourceFile, node);
-    private stringOf(node);
-    private findNode(sourceFile, position);
+    private getTemplateClassDeclFromNode;
+    private getCollectedErrors;
+    private getDeclarationFromNode;
+    private stringOf;
+    private findNode;
 }
