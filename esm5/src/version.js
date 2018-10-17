@@ -11,5 +11,5 @@
  * Entry point for all public APIs of the common package.
  */
 import { Version } from '@angular/core';
-export var VERSION = new Version('7.0.0-beta.4-a2418a9037');
+export var VERSION = new Version('7.0.0-rc.1-1c561a833c');
 //# sourceMappingURL=version.js.map

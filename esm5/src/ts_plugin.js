@@ -26,7 +26,7 @@ export function create(info /* ts.server.PluginCreateInfo */) {
         try {
             return callback();
         }
-        catch (e) {
+        catch (_a) {
             return undefined;
         }
     }
